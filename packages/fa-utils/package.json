@@ -1,5 +1,5 @@
 {
-  "name": "fa-utils-persian",
+  "name": "@hrk/fa-utils",
   "version": "0.1.0",
   "description": "Simple Persian date and number formatting helpers using built-in Intl APIs",
   "license": "MIT",
