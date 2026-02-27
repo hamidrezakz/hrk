@@ -24,8 +24,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          registry-url: https://registry.npmjs.org
-          scope: "@hrk"
+          cache: pnpm
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
@@ -34,6 +33,11 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
+
+      - name: Configure npm registry
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >> ~/.npmrc
+          echo "@hrk:registry=https://registry.npmjs.org" >> ~/.npmrc
 
       - name: Build fa-utils
         run: pnpm --filter @hrk/fa-utils build
@@ -51,8 +55,6 @@ jobs:
       - name: Publish to npm
         if: steps.check.outputs.exists == 'false'
         run: pnpm --filter @hrk/fa-utils publish --access public --no-git-checks
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Skip duplicate version
         if: steps.check.outputs.exists == 'true'
