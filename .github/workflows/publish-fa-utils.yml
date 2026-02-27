@@ -39,6 +39,11 @@ jobs:
       - name: Build fa-utils
         run: pnpm --filter @dimah/fa-utils build
 
+      - name: Configure npm authentication
+        run: |
+          echo "//registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN" > ~/.npmrc
+          echo "@dimah:registry=https://registry.npmjs.org" >> ~/.npmrc
+
       - name: Validate npm token
         run: |
           if [ -z "$NODE_AUTH_TOKEN" ]; then
