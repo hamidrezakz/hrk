@@ -13,6 +13,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+    env:
+      NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -36,6 +38,14 @@ jobs:
       - name: Build fa-utils
         run: pnpm --filter @hrk/fa-utils build
 
+      - name: Validate npm token
+        run: |
+          if [ -z "$NODE_AUTH_TOKEN" ]; then
+            echo "NPM_TOKEN is missing in GitHub Secrets."
+            exit 1
+          fi
+          npm whoami
+
       - name: Check if version already exists
         id: check
         run: |
@@ -49,8 +59,6 @@ jobs:
       - name: Publish to npm
         if: steps.check.outputs.exists == 'false'
         run: pnpm --filter @hrk/fa-utils publish --access public --no-git-checks
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Skip duplicate version
         if: steps.check.outputs.exists == 'true'
